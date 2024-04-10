@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <title>Assignment-week2</title>
+    </head>
+    <body>
+        <script>
+            console.log("===== 1 =====");
+
+            function findAndPrint(messages, currentStation){
+                // your code here
+                const mrt_lst = ["Songshan", "Nanjing Sanmin", "Taipei Arena", "Nanjing Fuxing", "Songjiang Nanjing", "Zhongshan", "Beimen", "Ximen", "Xiaonanmen", "Chiang Kai-Shek Memorial Hall", "Guting", "Taipower Building", "Gongguan", "Wanlong", "Jingmei", "Dapinglin", "Qizhang", "Xindian City Hall", "Xindian"];
+
+                // 处理message，生成每个人所在站点的字典location_dict，方便后续处理
+                var location_dict = {};
+                for (var friend in messages){
+                    var flag = 0; // 标志：用于确认所在站点后break，以及小碧潭的情况
+                    for (let i in mrt_lst){
+                        if (messages[friend].includes(mrt_lst[i])){
+                            location_dict[friend] = mrt_lst[i];
+                            flag = 1; // 确认站点
+                            break;
+                        }
+                    }
+                    if (flag == 0 && messages[friend].includes("Xiaobitan")){ // 出现小碧潭的情况
+                        location_dict[friend] = "Xiaobitan";
+                    }
+                }
+                // 特殊处理：如果current station在小碧潭
+                if (currentStation == "Xiaobitan"){
+                    // 如果有人也在小碧潭，那就直接print并结束执行
+                    for (var friend in location_dict){
+                        if (location_dict[friend] == "Xiaobitan"){
+                            var nearest = friend;
+                            console.log(nearest);
+                            return 0;
+                        }
+                    }
+                    // 如果没有人在小碧潭，那就相当于看谁离七张最近
+                    currentStation = "Qizhang";
+                }
+                // 看谁离最近
+                current_index = mrt_lst.indexOf(currentStation);
+                var smallest_distance = 30;
+                // 获取每个人的距离
+                for (var friend in location_dict){
+                    if (location_dict[friend] == "Xiaobitan"){ // 特殊处理：有人在小碧潭
+                        var location_index = mrt_lst.indexOf("Qizhang")
+                        var distance = Math.abs(location_index - current_index) + 1;
+                    }
+                    else{
+                        var location_index = mrt_lst.indexOf(location_dict[friend]);
+                        var distance = Math.abs(location_index - current_index);
+                    }
+                    // 判断距离最近
+                    if (distance < smallest_distance){ // 因为要求里没提，暂不考虑相等的情况
+                        nearest = friend;
+                        smallest_distance = distance;
+                    }
+                }
+                console.log(nearest);
+                return 0;
+            }
+            const messages={
+                "Bob":"I'm at Ximen MRT station.",
+                "Mary":"I have a drink near Jingmei MRT station.",
+                "Copper":"I just saw a concert at Taipei Arena.",
+                "Leslie":"I'm at home near Xiaobitan station.",
+                "Vivian":"I'm at Xindian station waiting for you."
+            };
+            findAndPrint(messages, "Wanlong"); // print Mary
+            findAndPrint(messages, "Songshan"); // print Copper
+            findAndPrint(messages, "Qizhang"); // print Leslie
+            findAndPrint(messages, "Ximen"); // print Bob
+            findAndPrint(messages, "Xindian City Hall"); // print Vivian
+
+            console.log("===== 2 =====");
+
+            // your code here, maybe
+            var time = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []] // 长度为24，代表24小时
+
+            function book(consultants, hour, duration, criteria){
+                // your code here
+                // 根据criteria排序列表
+                if (criteria == "price"){
+                    var sorted_cons = consultants.sort(function(a, b){return a.price - b.price;});
+                }
+                else if (criteria == "rate"){
+                    var sorted_cons = consultants.sort(function(a, b){return b.rate - a.rate;});
+                }
+                // 判断是否有空
+                for (let i = 0; i < consultants.length; i++){
+                    var flag = 0; // 标志：用于判断时间冲突
+                    for (let j = 0; j < duration; j++){
+                        if (time[hour + j].includes(sorted_cons[i]["name"])){
+                            flag = 1; // 标志：时间冲突
+                            break; // 进入下一个外循环（看下一个consultant是否有时间冲突）
+                        }
+                    }
+                    if (flag == 0){
+                        var name = sorted_cons[i]["name"];
+                        break; // 没有时间冲突，跳出循环
+                    }
+                }
+                if (flag == 1){ // 标志：所有人都有时间冲突
+                    console.log("No Service");
+                    return 0;
+                }
+                else{
+                    console.log(name);
+                }
+                // 记录已预约时间
+                for (let i = 0; i < duration; i++){
+                    time[hour + i].push(name);
+                }
+            }
+            const consultants=[
+                {"name":"John", "rate":4.5, "price":1000},
+                {"name":"Bob", "rate":3, "price":1200},
+                {"name":"Jenny", "rate":3.8, "price":800}
+            ];
+            book(consultants, 15, 1, "price"); // Jenny
+            book(consultants, 11, 2, "price"); // Jenny
+            book(consultants, 10, 2, "price"); // John
+            book(consultants, 20, 2, "rate"); // John
+            book(consultants, 11, 1, "rate"); // Bob
+            book(consultants, 11, 2, "rate"); // No Service
+            book(consultants, 14, 3, "price"); // John
+
+            console.log("===== 3 =====");
+
+            function func(...data){
+                // your code here
+                // 建立一个字典，格式{'中间名':[全名的列表]}
+                var dic = {};
+                for (i in data){
+                    var mid_index = Math.floor(data[i].length / 2)
+                    var mid_name = data[i][mid_index];
+                    if (!(mid_name in dic)){
+                        dic[mid_name] = [data[i]];
+                    }
+                    else{
+                        dic[mid_name].push(data[i]);
+                    }
+                }
+                // 判断并输出全名
+                for (mid in dic){
+                    if (dic[mid].length == 1){
+                        console.log(dic[mid][0]);
+                        return 0;
+                    }
+                }
+                console.log("没有");
+                return 0;
+            }
+            func("彭大牆", "陳王明雅", "吳明"); // print 彭大牆
+            func("郭靜雅", "王立強", "郭林靜宜", "郭立恆", "林花花"); // print 林花花
+            func("郭宣雅", "林靜宜", "郭宣恆", "林靜花"); // print 沒有
+            func("郭宣雅", "夏曼藍波安", "郭宣恆"); // print 夏曼藍波安
+
+            console.log("===== 4 =====");
+
+            function getNumber(index){
+                // your code here
+                function getNum(n){
+                    if (n == 0){
+                        var number = 0;
+                        return number;
+                    }
+                    else if (n % 3 == 0){
+                        var number = getNum(n - 1) - 1;
+                        return number;
+                    }
+                    else{
+                        number = getNum(n - 1) + 4;
+                        return number;
+                    }
+                }
+                console.log(getNum(index));
+                return 0;
+            }
+            getNumber(1); // print 4
+            getNumber(5); // print 15
+            getNumber(10); // print 25
+            getNumber(30); // print 70
+
+            console.log("===== 5 =====");
+
+            function find(spaces, stat, n){
+                // your code here
+                var flag = 0; // 标志：用于判断有没有可用的车厢
+                var smallest_diff = 100; // 差值：用于判断可用的车厢里哪个最合适
+                for (let i = 0; i < stat.length; i++){
+                    if (stat[i] == 1){
+                        if (spaces[i] >= n){
+                            flag = 1;
+                            // 判断差值最小的可用车厢
+                            var diff = spaces[i] - n;
+                            if (diff < smallest_diff){ // 因为要求中没提，这里不使用<=，则如果出现两个以上最合适车厢，默认选择最前面的一个
+                                var fit = i;
+                                smallest_diff = diff;
+                            }
+                        }
+                    }
+                }
+                if (flag == 0){
+                    fit = -1;
+                }
+                console.log(fit);
+                return 0;
+            }
+            find([3, 1, 5, 4, 3, 2], [0, 1, 0, 1, 1, 1], 2); // print 5
+            find([1, 0, 5, 1, 3], [0, 1, 0, 1, 1], 4); // print -1
+            find([4, 6, 5, 8], [0, 1, 1, 1], 4); // print 2
+        </script>
+    </body>
+</html>
