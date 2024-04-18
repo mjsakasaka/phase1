@@ -79,34 +79,47 @@ body{
     display: flex;
     flex-wrap: wrap;
 }
+.bigboximg{
+    width: 380px;
+    height: 200px;
+    margin: 0px;
+    position: absolute; /* 设置绝对定位 */
+    top: 50%; /* 图片顶部位于父元素区块的中央位置 */
+    left: 50%; /* 图片左侧位于父元素区块的中央位置 */
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
 .bigbox_1{
     width: 380px;
     height: 200px;
     margin: 10px;
-    background-image: url('image.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
 }
 .bigbox{
     flex: auto;
     width: 180px;
     height: 200px;
     margin: 10px;
-    background-image: url('image.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
 }
 .bigbox_2{
     flex: auto;
     width: 180px;
     height: 200px;
     margin: 10px;
-    background-image: url('image.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
 }
 .starline{
     width: 100%;
@@ -114,11 +127,13 @@ body{
     display: flex;
     justify-content: flex-end;
     opacity: 50%;
+    z-index: 2;
 }
 .star{
     height: 25px;
     width: 25px;
     margin: 10px;
+    z-index: 2;
 }
 .bigboxtext{
     width: 100%;
@@ -128,6 +143,14 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 3;
+    
+}
+.bigboxinnertext{
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden; /* 超出部分隐藏 */
+    text-overflow: ellipsis;
+    padding: 8px;
 }
 
 
