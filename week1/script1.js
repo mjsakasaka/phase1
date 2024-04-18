@@ -10,11 +10,11 @@ fetch("https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assi
 .then(function(response){
     return response.json();
 })
-.then(function(spotData){
+.then(function (spotData){
     let spotArr = spotData.data.results;
     // 处理三个small box
     for (let i = 1; i < 4; i++){
-        let box = document.querySelector("#box_" + i.toString());
+        let box = document.querySelector("#smallbox_" + i.toString());
         // 图片部分
         let imgUrls = spotArr[i-1].filelist.toLowerCase();
         let imgUrl = imgUrls.split("jpg")[0] + "jpg";
@@ -28,10 +28,10 @@ fetch("https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assi
         box.appendChild(newDiv);
     }
     // 处理10个bigbox
-    for (let i = 4; i < 14; i++){
+    for (let i = 1; i < 11; i++){
         let box = document.querySelector("#box_" + i.toString());
         // 图片部分
-        let imgUrls = spotArr[i-1].filelist.toLowerCase();
+        let imgUrls = spotArr[i+2].filelist.toLowerCase();
         let imgUrl = imgUrls.split("jpg")[0] + "jpg";
         let bigboxImg = document.querySelector("#bigboximg"+ i.toString());
         bigboxImg.src = imgUrl;
@@ -42,8 +42,76 @@ fetch("https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assi
         box.appendChild(newDiv);
         newDiv = document.querySelector("#bigboxtext" + i.toString());
         let innerDiv = document.createElement("div");
-        innerDiv.textContent = spotArr[i-1].stitle;
+        innerDiv.textContent = spotArr[i+2].stitle;
         innerDiv.className = "bigboxinnertext";
         newDiv.appendChild(innerDiv);
     }
 });
+
+let n = 0; // 用于loadmore
+
+function loadmore(){
+    n += 10;
+    if (n > 40){
+        document.querySelector("#loadmore").style.display = "none";
+    }
+    let m = 11;
+    if (n == 50){
+        m = 6;
+    }
+    for (let i = 1; i < m; i++){
+        // 外层bigbox
+        let mainBottom = document.querySelector("#mainbottom");
+        let bigBox = document.createElement("div");
+        if (i % 5 == 1){
+            bigBox.className = "bigbox_1";
+        } else {
+            bigBox.className = "bigbox";
+        }
+        bigBox.id = "box_" + (i+n).toString();
+        mainBottom.appendChild(bigBox);
+        // 内层bigboximg
+        let bigBoxImg = document.createElement("img");
+        bigBoxImg.className = "bigboximg";
+        bigBoxImg.id = "bigboximg" + (i+n).toString();
+        bigBox.appendChild(bigBoxImg);
+        // 内层starline
+        let starLine = document.createElement("div");
+        starLine.className = "starline"
+        bigBox.appendChild(starLine);
+        // starline内层img
+        let star = document.createElement("img");
+        star.src = "star_icon.png";
+        star.className = "star";
+        starLine.appendChild(star);
+    }
+    fetch("https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment-1")
+    .then(function(response){
+        return response.json();
+    })
+    .then(function (spotData){
+        let spotArr = spotData.data.results;
+        let m = 11;
+        if (n == 50){
+            m = 6;
+        }
+        for (let i = 1; i < m; i++){
+            let box = document.querySelector("#box_" + (i+n).toString());
+            // 图片部分
+            let imgUrls = spotArr[i+n+2].filelist.toLowerCase();
+            let imgUrl = imgUrls.split("jpg")[0] + "jpg";
+            let bigboxImg = document.querySelector("#bigboximg"+ (i+n).toString());
+            bigboxImg.src = imgUrl;
+            // 文字部分
+            let newDiv = document.createElement("div");
+            newDiv.className = "bigboxtext";
+            newDiv.id = "bigboxtext" + (i+n).toString();
+            box.appendChild(newDiv);
+            newDiv = document.querySelector("#bigboxtext" + (i+n).toString());
+            let innerDiv = document.createElement("div");
+            innerDiv.textContent = spotArr[i+n+2].stitle;
+            innerDiv.className = "bigboxinnertext";
+            newDiv.appendChild(innerDiv);
+        }
+    });
+};

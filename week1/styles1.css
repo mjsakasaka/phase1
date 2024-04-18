@@ -44,6 +44,7 @@ body{
     display: flex;
     justify-content: center;
     margin-top: 30px;
+    margin-bottom: 30px;
 }
 .main{
     width: 1200px;
@@ -98,6 +99,7 @@ body{
     align-items: center;
     justify-content: center;
     z-index: 0;
+    background-color: #ccdde8;
 }
 .bigbox{
     flex: auto;
@@ -109,17 +111,7 @@ body{
     align-items: center;
     justify-content: center;
     z-index: 0;
-}
-.bigbox_2{
-    flex: auto;
-    width: 180px;
-    height: 200px;
-    margin: 10px;
-    overflow: hidden;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    z-index: 0;
+    background-color: #ccdde8;
 }
 .starline{
     width: 100%;
@@ -153,6 +145,20 @@ body{
     padding: 8px;
 }
 
+.load_container{
+    padding-top: 50px;
+    padding-bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.loadmore{
+    background-color: #c7c7c77e;
+    width: 120px;
+    padding: 15px;
+    text-align: center;
+    font-size: 16px;
+}
 
 @media (max-width:1200px){
     .main{
@@ -174,9 +180,6 @@ body{
     }
     .bigbox{
         width: 20%;
-    }
-    .bigbox_2{
-        width: 45%;
     }
 }
 
@@ -234,6 +237,9 @@ body{
 
     .maintop{
         flex-wrap: wrap;
+    }
+    .bigboximg{
+        width: 100%;
     }
     .smallbox{
         width: 100%;
