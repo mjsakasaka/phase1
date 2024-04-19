@@ -81,14 +81,15 @@ body{
     flex-wrap: wrap;
 }
 .bigboximg{
-    width: 380px;
-    height: 200px;
+    width: 100%; /* 图像宽度100% */
+    height: 100%; /* 图像高度100% */
+    object-fit: cover; /* 图像填充整个容器 */
+    object-position: center; /* 图像位置居中 */
     margin: 0px;
     position: absolute; /* 设置绝对定位 */
     top: 50%; /* 图片顶部位于父元素区块的中央位置 */
     left: 50%; /* 图片左侧位于父元素区块的中央位置 */
     transform: translate(-50%, -50%);
-    z-index: 0;
 }
 .bigbox_1{
     width: 380px;
@@ -98,7 +99,6 @@ body{
     position: relative;
     align-items: center;
     justify-content: center;
-    z-index: 0;
     background-color: #ccdde8;
 }
 .bigbox{
@@ -110,7 +110,6 @@ body{
     position: relative;
     align-items: center;
     justify-content: center;
-    z-index: 0;
     background-color: #ccdde8;
 }
 .starline{
@@ -119,13 +118,11 @@ body{
     display: flex;
     justify-content: flex-end;
     opacity: 50%;
-    z-index: 2;
 }
 .star{
     height: 25px;
     width: 25px;
     margin: 10px;
-    z-index: 2;
 }
 .bigboxtext{
     width: 100%;
@@ -135,8 +132,6 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 3;
-    
 }
 .bigboxinnertext{
     white-space: nowrap; /* 不换行 */
