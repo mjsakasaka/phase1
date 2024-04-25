@@ -16,17 +16,20 @@ async def home_page():
 async def css():
     return FileResponse("styles.css")
 
+def js_string(url: str):
+    return "<script>window.location.href = \"" + url + "\";</script>"
+
 @app.post("/signin")
 async def login(request: Request, username: str = Form(default=None), password: str = Form(default=None)):
     if username == "test" and password == "test":
         request.session["SIGNED-IN"] = True
-        return RedirectResponse("/member")
+        return HTMLResponse(js_string("/member"))
     elif username == None or password == None:
-        return RedirectResponse("/error?message=請輸入帳號和密碼")
+        return HTMLResponse(js_string("/error?message=請輸入帳號和密碼"))
     else:
-        return RedirectResponse("/error?message=帳號或密碼輸入錯誤")
+        return HTMLResponse(js_string("/error?message=帳號或密碼輸入錯誤"))
     
-@app.route("/member", methods=["GET", "POST"])
+@app.get("/member")
 async def member_page(request: Request):
     if not request.session.get("SIGNED-IN"):
         return RedirectResponse("/")
@@ -37,7 +40,7 @@ async def member_page(request: Request):
         "logout": "登出系統"
     })
     
-@app.post("/error", response_class=HTMLResponse)
+@app.get("/error", response_class=HTMLResponse)
 async def error_page(request: Request, message: str):
     return templates.TemplateResponse("result.html", {
         "request": request, 
