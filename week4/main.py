@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from urllib.parse import quote
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -16,18 +17,18 @@ async def home_page():
 async def css():
     return FileResponse("styles.css")
 
-def js_string(url: str):
-    return "<script>window.location.href = \"" + url + "\";</script>"
-
 @app.post("/signin")
 async def login(request: Request, username: str = Form(default=None), password: str = Form(default=None)):
     if username == "test" and password == "test":
         request.session["SIGNED-IN"] = True
-        return HTMLResponse(js_string("/member"))
+        return Response(status_code=302, headers={"Location": "/member"})
     elif username == None or password == None:
-        return HTMLResponse(js_string("/error?message=請輸入帳號和密碼"))
+        error_message = "請輸入帳號和密碼"
+        return Response(status_code=302, headers={"Location": f"/error?message={quote(error_message)}"})
     else:
-        return HTMLResponse(js_string("/error?message=帳號或密碼輸入錯誤"))
+        error_message = "帳號或密碼輸入錯誤"
+        return Response(status_code=302, headers={"Location": f"/error?message={quote(error_message)}"})
+
     
 @app.get("/member")
 async def member_page(request: Request):
