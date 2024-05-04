@@ -5,7 +5,7 @@
 CREATE DATABASE website;
 ```
 
-![img](week5/imgs/task2-1.png)  
+![img](/week5/imgs/task2-1.png)  
 
 2. Create a new table named member, in the website database, designed as below:...  
 
