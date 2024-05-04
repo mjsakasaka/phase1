@@ -121,7 +121,7 @@ SELECT AVG(follower_count) FROM member;
 SELECT AVG(follower_count) FROM (SELECT follower_count FROM member ORDER BY follower_count DESC LIMIT 2) AS sub_table;
 ```
 
-![img](/week5/imgs/task4-4.png)
+![img](/week5/imgs/task4-4-1.png)
 
 ##  TASK 5
 
