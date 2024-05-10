@@ -21,7 +21,7 @@ async def home_page(request: Request):
 @app.post("/signin")
 async def login(request: Request, username: str = Form(default=None), password: str = Form(default=None)):
     # check username and password
-    db_data = get_db_data(f"SELECT password, id, username, name FROM member WHERE username = '{username}';")
+    db_data = get_db_data("SELECT password, id, username, name FROM member WHERE username = %s;", (username, ))
     if db_data != []:
         if db_data[0][0] == password:
             request.session["SIGNED-IN"] = True
@@ -41,7 +41,7 @@ async def member_page(request: Request):
         return RedirectResponse("/")
     # 顯示留言
     name = request.session["name"]
-    messages = get_db_data(f"SELECT member.name, message.content, message.id FROM message INNER JOIN member ON member.id = message.member_id;")
+    messages = get_db_data("SELECT member.name, message.content, message.id FROM message INNER JOIN member ON member.id = message.member_id;")
     return templates.TemplateResponse("member.html", {
         "request": request, 
         "login_message": f"{name}，歡迎登入系統",
@@ -67,7 +67,6 @@ async def signout(request: Request):
         request.session.pop("username")
         request.session.pop("name")
     request.session["SIGNED-IN"] = False
-    print("session")
     print(request.session)
     return RedirectResponse("/")
 
@@ -76,22 +75,22 @@ async def signup(request: Request,
                  name: str = Form(), 
                  username: str = Form(), 
                  password: str = Form()):
-    db_username = get_db_data(f"SELECT username FROM member WHERE username = '{username}';")
+    db_username = get_db_data("SELECT username FROM member WHERE username = %s;", (username, ))
     if db_username != []:
         error_message = "帳號已被使用"
         return RedirectResponse(status_code=303, url=f"/error?message={quote(error_message)}")
-    change_db_data(f"INSERT INTO member (name, username, password) VALUES ('{name}', '{username}', '{password}')")
-    return RedirectResponse(status_code=303, url="/")\
+    change_db_data("INSERT INTO member (name, username, password) VALUES (%s, %s, %s)", (name, username, password))
+    return RedirectResponse(status_code=303, url="/")
     
 @app.post("/createMessage")
 async def creat_message(request: Request, content: str = Form()):
     member_id = request.session["member_id"]
-    change_db_data(f"INSERT INTO message(member_id, content) VALUES ({member_id}, '{content}');")
+    change_db_data("INSERT INTO message(member_id, content) VALUES (%s, %s);", (member_id, content))
     return RedirectResponse(status_code=303, url="/member")
 
 @app.post("/deleteMessage")
 async def delete_message(request: Request):
     form_data = await request.form()
     message_id = form_data['message_id']
-    change_db_data(f"DELETE FROM message WHERE id = {message_id};")
+    change_db_data("DELETE FROM message WHERE id = %s;", (message_id, ))
     return RedirectResponse(status_code=303, url="/member")
