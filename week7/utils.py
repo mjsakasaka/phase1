@@ -29,7 +29,3 @@ def change_db_data(sql_query: str, params = None) -> None:
     con.commit()
     con.close()
 
-username = "test"
-data = get_db_data("SELECT id, name, username FROM member WHERE username = %s", (username, ))
-print(data)
-print(data == [])

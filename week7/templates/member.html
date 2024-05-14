@@ -3,56 +3,88 @@
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <meta charset="utf-8" />
-        <title>{{ title }}</title>
+        <title>歡迎光臨，這是會員頁</title>
         <link rel="stylesheet" type="text/css" href="/static/styles_mem.css">
 
     </head>
     <body>
         <div class="title">
-            <div>{{ title }}</div>
+            <div>歡迎光臨，這是會員頁</div>
         </div>
         <!-- 登入成功信息 -->
         <div class="homepage_message">{{ login_message }}</div>
-        <div class="logout"><a href="/signout">{{ logout }}</a></div>
+        <div class="logout"><a href="/signout">登出系統</a></div>
         <br>
         <!-- 会员姓名查询框 -->
         <div class="headline">查詢會員姓名</div>
-        <div id="member-query" class="member-query"> 
+        <div> 
             <div class="field">
                 <input type="text" id="query-username" class="input-field">
                 <input type="submit" value="查詢" class="submit-box" onclick="memberQuery();">
             </div>
-            <div id="result-container" class="result-container"></div>
+            <div id="query-result-container" class="result-container">
+                <div id="query-result"></div>
+            </div>
+        </div>
+        <br>
+        <!-- 更新姓名 -->
+        <div class="headline">更新我的姓名</div>
+        <div> 
+            <div class="field">
+                <input type="text" id="new-name" class="input-field">
+                <input type="submit" value="更新" class="submit-box" onclick="updateName();">
+            </div>
+            <div id="update-result-container" class="result-container">
+                <div id="update-result"></div>
+            </div>
         </div>
         <br>
         <script>
-            function createResult(content){
-                let resultContainer = document.getElementById("result-container");
-                let result = document.createElement("div");
-                result.textContent = content;
-                resultContainer.appendChild(result);
-            }
+            // 查询会员姓名
             function memberQuery(){
                 let queryUsername = document.getElementById("query-username").value;
                 let url = "http://127.0.0.1:8000/api/member?username=" + queryUsername;
                 fetch(url).then(function(response){
                     return response.json();
                 }).then(function(data){
-                    console.log(data);
+                    let resultDiv = document.getElementById("query-result");
                     if (data.data == "null"){
                         let content = "No Data";
-                        createResult(content);
+                        resultDiv.innerText = content;
                     }
                     else{
                         let name = data.data.name;
                         let username = data.data.username;
                         let content = name + " (" + username + ")";
-                        createResult(content);
+                        resultDiv.innerText = content;
                     }
                 });
-                
             }
-            
+            // 更新姓名
+            function updateName(){
+                let newName = document.getElementById("new-name").value;
+                let url = "http://127.0.0.1:8000/api/member";
+                let body_data = {
+                    "name": newName
+                }
+                fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body_data)
+                }).then(function(response){
+                    return response.json();
+                }).then(function(data){
+                    let resultDiv = document.getElementById("update-result");
+                    if (data.ok == true){
+                        resultDiv.innerHTML = "更新成功";
+                    } else{
+                        resultDiv.innerHTML = "更新失敗";
+                        console.log(data);
+                    }
+                })
+            }
         </script>
     </body>
 </html>

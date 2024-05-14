@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, Header
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from urllib.parse import quote
 from utils import get_db_data, change_db_data
-from json import dumps
+from pydantic import BaseModel
+from typing import Annotated
 
 app = FastAPI()
 
@@ -46,10 +47,6 @@ async def member_page(request: Request):
     return templates.TemplateResponse("member.html", {
         "request": request, 
         "login_message": f"{name}，歡迎登入系統",
-        "title": "歡迎光臨，這是會員頁",
-        "logout": "登出系統",
-        "messages": messages,
-        "name": name
     })
     
 @app.get("/error")
@@ -98,6 +95,9 @@ async def delete_message(request: Request):
 
 @app.get("/api/member")
 async def member_query(request: Request, username: str):
+    if not request.session.get("SIGNED-IN"):
+        return RedirectResponse("/")
+    print(request.session)
     data = get_db_data("SELECT id, name, username FROM member WHERE username = %s", (username, ))
     if data == []:
         response_data = {
@@ -114,5 +114,30 @@ async def member_query(request: Request, username: str):
                 "name": name,
                 "username": username
             }
+        }
+        return JSONResponse(content=response_data)
+    
+class Item(BaseModel):
+    name: str
+
+@app.patch("/api/member")
+async def update_name(
+    request: Request,
+    content_type: Annotated[str | None, Header()] = None, 
+    item: Item | None = None
+):
+    try:
+        username = request.session["username"]
+        new_name = item.name
+        change_db_data("UPDATE member SET name = %(new_name)s WHERE username = %(username)s;", {"new_name": new_name, "username": username})
+        request.session["name"] = new_name
+        print("ok", request.session)
+        response_data = {
+            "ok": True
+        }
+        return JSONResponse(content=response_data)
+    except:
+        response_data = {
+            "error": True
         }
         return JSONResponse(content=response_data)
