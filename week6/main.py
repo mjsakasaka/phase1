@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -23,16 +23,15 @@ async def login(request: Request, username: str = Form(default=None), password: 
     # check username and password
     db_data = get_db_data("SELECT password, id, username, name FROM member WHERE username = %s;", (username, ))
     if db_data != []:
-        if db_data[0][0] == password:
+        if str(db_data[0][0]) == password:
             request.session["SIGNED-IN"] = True
             request.session["member_id"] = db_data[0][1]
             request.session["username"] = db_data[0][2]
             request.session["name"] = db_data[0][3]
             print(request.session)
             return RedirectResponse(status_code=303, url="/member")
-    else:
-        error_message = "帳號或密碼輸入錯誤"
-        return RedirectResponse(status_code=303, url=f"/error?message={quote(error_message)}")
+    error_message = "帳號或密碼輸入錯誤"
+    return RedirectResponse(status_code=302, url=f"/error?message={quote(error_message)}")
 
 @app.get("/member")
 async def member_page(request: Request):
