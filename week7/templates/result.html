@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <title>{{ title }}</title>
+        <style>
+            .title{
+                height: 100px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #223344;
+            }
+            .title div{
+                font-size: 30px;
+                color: white;
+            }
+            .headline{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 20px;
+                height: 40px;
+                padding-top: 30px;
+            }
+            .logout{
+                display: flex;
+                justify-content: center;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="title">
+            <div>{{ title }}</div>
+        </div>
+        <div class="headline">{{ message }}</div>
+        <div class="logout"><a href="/signout">{{ logout }}</a></div>
+        
+    </body>
+</html>

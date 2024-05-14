@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <title>{{ title }}</title>
+        <link rel="stylesheet" type="text/css" href="/static/styles_mem.css">
+
+    </head>
+    <body>
+        <div class="title">
+            <div>{{ title }}</div>
+        </div>
+        <!-- 登入成功信息 -->
+        <div class="homepage_message">{{ login_message }}</div>
+        <div class="logout"><a href="/signout">{{ logout }}</a></div>
+        <br>
+        <!-- 会员姓名查询框 -->
+        <div class="headline">查詢會員姓名</div>
+        <div id="member-query" class="member-query"> 
+            <div class="field">
+                <input type="text" id="query-username" class="input-field">
+                <input type="submit" value="查詢" class="submit-box" onclick="memberQuery();">
+            </div>
+            <div id="result-container" class="result-container"></div>
+        </div>
+        <br>
+        <script>
+            function createResult(content){
+                let resultContainer = document.getElementById("result-container");
+                let result = document.createElement("div");
+                result.textContent = content;
+                resultContainer.appendChild(result);
+            }
+            function memberQuery(){
+                let queryUsername = document.getElementById("query-username").value;
+                let url = "http://127.0.0.1:8000/api/member?username=" + queryUsername;
+                fetch(url).then(function(response){
+                    return response.json();
+                }).then(function(data){
+                    console.log(data);
+                    if (data.data == "null"){
+                        let content = "No Data";
+                        createResult(content);
+                    }
+                    else{
+                        let name = data.data.name;
+                        let username = data.data.username;
+                        let content = name + " (" + username + ")";
+                        createResult(content);
+                    }
+                });
+                
+            }
+            
+        </script>
+    </body>
+</html>
