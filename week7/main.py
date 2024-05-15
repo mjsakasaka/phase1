@@ -32,9 +32,8 @@ async def login(request: Request, username: str = Form(default=None), password: 
             request.session["name"] = db_data[0][3]
             print(request.session)
             return RedirectResponse(status_code=303, url="/member")
-    else:
-        error_message = "帳號或密碼輸入錯誤"
-        return RedirectResponse(status_code=303, url=f"/error?message={quote(error_message)}")
+    error_message = "帳號或密碼輸入錯誤"
+    return RedirectResponse(status_code=303, url=f"/error?message={quote(error_message)}")
 
 @app.get("/member")
 async def member_page(request: Request):
@@ -47,6 +46,8 @@ async def member_page(request: Request):
     return templates.TemplateResponse("member.html", {
         "request": request, 
         "login_message": f"{name}，歡迎登入系統",
+        "messages": messages,
+        "name": name
     })
     
 @app.get("/error")
@@ -60,12 +61,16 @@ async def error_page(request: Request, message: str):
 
 @app.get("/signout")
 async def signout(request: Request):
-    if request.session["SIGNED-IN"]:
-        request.session.pop("member_id")
-        request.session.pop("username")
-        request.session.pop("name")
-    request.session["SIGNED-IN"] = False
-    print(request.session)
+    try:
+        if request.session["SIGNED-IN"]:
+            request.session.pop("member_id")
+            request.session.pop("username")
+            request.session.pop("name")
+        else:
+            request.session["SIGNED-IN"] = False
+        print(request.session)
+    except:
+        pass
     return RedirectResponse("/")
 
 @app.post("/signup")
@@ -95,13 +100,11 @@ async def delete_message(request: Request):
 
 @app.get("/api/member")
 async def member_query(request: Request, username: str):
-    if not request.session.get("SIGNED-IN"):
-        return RedirectResponse("/")
     print(request.session)
     data = get_db_data("SELECT id, name, username FROM member WHERE username = %s", (username, ))
-    if data == []:
+    if data == [] or not request.session.get("SIGNED-IN"):
         response_data = {
-            "data": "null"
+            "data": None
         }
         return JSONResponse(content=response_data)
     else:
