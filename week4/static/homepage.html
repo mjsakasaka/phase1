@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <title>歡迎光臨</title>
+        <link rel="stylesheet" type="text/css" href="static/styles.css">
+    </head>
+    <body>
+        <div class="title">
+            <div>歡迎光臨，請輸入帳號密碼</div>
+        </div>
+        <div class="headline">登入系統</div>
+        <form id="signin-form" action="/signin" method="post">
+            <div class="field">
+                <label for="username" class="field-name">帳號</label>
+                <input type="text" id="username" name="username" class="input-field">
+            </div>
+            <div class="field">
+                <label for="password" class="field-name">密碼</label>
+                <input type="password" id="password" name="password" class="input-field">
+            </div>
+            <div class="field">
+                <label for="checkbox" class="field-name">同意條款</label>
+                <input type="checkbox" id="checkbox" name="checkbox">
+            </div>
+            <div class="field">
+                <input type="submit" value="登入" class="submit-box">
+            </div>
+        </form>
+        <br>
+        <hr>
+        <div class="headline">計算正整數的平方</div>
+        <form id="square-form" method="get">
+                <div class="field">
+                    <label for="input_num" class="field-name">正整数</label>
+                    <input type="text" id="input-val" class="input-field">
+                </div>
+                <div class="field">
+                    <input type="submit" value="計算" class="submit-box">
+                </div>
+        </form>
+        <script>
+            // 登入账号
+            document.getElementById("signin-form")
+            .addEventListener("submit", function(event){
+                let checkBox = document.getElementById("checkbox");
+                if (!checkBox.checked){
+                    alert("Please check the checkbox first");
+                    event.preventDefault();
+                }
+            });
+            // 计算平方
+            function isPosInt(val){ // 判断正整数
+                let num = parseFloat(val);
+                if (isNaN(num)){ // 排除非数字
+                    return false;
+                } else if (num <= 0){ // 排除负数和0
+                    return false;
+                } else if (num != parseInt(val)){ // 排除小数
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            document.getElementById("square-form")
+            .addEventListener("submit", function(event){
+                let inputVal = document.getElementById("input-val").value;
+                if (!isPosInt(inputVal)){
+                    alert("Please enter a positive number");
+                    event.preventDefault();
+                } else {
+                    event.preventDefault();
+                    window.location.href = "/square/" + inputVal;
+                }
+            });
+        </script>
+    </body>
+</html>
